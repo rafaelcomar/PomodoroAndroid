@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PomodoroAndroid</string>
+    <string name="title_activity_notification_sender">NotificationSender</string>
 </resources>

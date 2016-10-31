@@ -1,11 +1,18 @@
 package com.example.usuario.pomodoroandroid;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,12 +23,17 @@ import android.widget.TextView;
 import com.example.usuario.pomodoroandroid.model.Task;
 import com.example.usuario.pomodoroandroid.services.ChronometerService;
 import com.example.usuario.pomodoroandroid.util.ListAdapter;
+import com.example.usuario.pomodoroandroid.util.NotificationSender;
+
+import java.util.Calendar;
 
 import static com.example.usuario.pomodoroandroid.util.ListAdapter.chronometerService;
 import static com.example.usuario.pomodoroandroid.util.ListAdapter.sBound;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final short PENDING_INTENT_ID = 1;
+    private static final short NOTIFICATION_ID = 1;
     public Button btnNew ;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -32,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +65,18 @@ public class MainActivity extends AppCompatActivity {
         chro = (TextView) findViewById(R.id.chronometerTimer);
 
         chro.setText(tsk.getQtdPomodoros());
+
+//        Intent it = new Intent("TOCAR_ALARME");
+//        PendingIntent alaPendingIntent = PendingIntent.getBroadcast(this, 0 , it, 0);
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTimeInMillis(System.currentTimeMillis());
+//        cal.add(Calendar.SECOND , 3);
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        alarmManager.set(AlarmManager.RTC , cal.getTimeInMillis() , alaPendingIntent);
+
+
+
+
 
 
 
@@ -111,5 +136,25 @@ public class MainActivity extends AppCompatActivity {
             sBound= false;
         }
     };
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void enviarNotification(){
+        Notification.Builder mBuilder = new Notification.Builder(this).setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("novo teste")
+                .setContentText("testeando aadasijda")
+                .setAutoCancel(true);
+
+        Intent resultIntent = new Intent(this, NotificationSender.class);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(NotificationSender.class);
+        stackBuilder.addNextIntent(resultIntent);
+
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(PENDING_INTENT_ID , PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID , mBuilder.build());
+    }
 
 }

@@ -4,12 +4,15 @@ package com.example.usuario.pomodoroandroid.util;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.usuario.pomodoroandroid.MainActivity;
 import com.example.usuario.pomodoroandroid.R;
@@ -44,7 +47,6 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
         this.context = applicationContext;
         chronometerService.setListener(this);
 
-
     }
 
     public String strzero(int n){
@@ -65,6 +67,7 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
         return strzero(hh) + ":" + strzero(min) + ":" + strzero(ss) ;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onDataChanged(Task task) {
         //m.atualizaCronometro(task);
@@ -73,9 +76,19 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
         if (task.isDescanso() && Integer.parseInt(task.getQtdSegundos()) == 0){
             MainActivity.chro.setTextColor(Color.RED);
             MainActivity.chro.setText(formataTempo(Integer.parseInt(task.getQtdSegundos())));
-            chronometerService.onStop(task);
+            chronometerService.onStop(task , context);
             sChronometerStarted = false;
             chronometerService.onStart(task, context);
+        }else if (task.isDescanso() == false && Integer.parseInt(task.getQtdSegundos()) == 0 && task.isConcluded() == false){
+            MainActivity.chro.setTextColor(Color.BLACK);
+            MainActivity.chro.setText(formataTempo(Integer.parseInt(task.getQtdSegundos())));
+            chronometerService.onStop(task,context);
+            sChronometerStarted = true;
+            chronometerService.onStart(task, context);
+        }else if (task.isConcluded()){
+            chronometerService.onStop(task,context);
+
+
         }else{
             MainActivity.chro.setText(formataTempo(Integer.parseInt(task.getQtdSegundos())));
         }
@@ -148,7 +161,7 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
                         sChronometerStarted = true;
                     }else{
                         holder.btnPlayPause.setText("Iniciar");
-                        chronometerService.onStop(task);
+                        chronometerService.onStop(task , context);
                         sChronometerStarted = false;
                     }
 

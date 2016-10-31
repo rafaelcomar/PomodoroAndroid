@@ -1,23 +1,44 @@
 package com.example.usuario.pomodoroandroid.services;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.usuario.pomodoroandroid.MainActivity;
+import com.example.usuario.pomodoroandroid.R;
+import com.example.usuario.pomodoroandroid.TaskDetails;
+import com.example.usuario.pomodoroandroid.dao.TaskDAO;
 import com.example.usuario.pomodoroandroid.model.Task;
+import com.example.usuario.pomodoroandroid.util.NotificationSender;
+
+
+import java.util.Calendar;
+
+
 
 /**
  * Created by Usuário on 23/10/2016.
  */
 
 public class ChronometerService extends Service {
+    private static final short PENDING_INTENT_ID = 1;
+    private static final short NOTIFICATION_ID = 1;
+
+
     public ChronometerService() {
     }
 
@@ -60,8 +81,8 @@ public class ChronometerService extends Service {
         if (context == null){
             System.out.println("nuloooooo");
         }else{
-            Toast t  = Toast.makeText(context, "A task " + task.getTitle().toString() + " foi iniciada." , Toast.LENGTH_LONG);
-            t.show();
+            //Toast t  = Toast.makeText(context, "A task " + task.getTitle().toString() + " foi iniciada." , Toast.LENGTH_LONG);
+            //t.show();
         }
         //this.task.setDescanso(true);
 
@@ -69,9 +90,60 @@ public class ChronometerService extends Service {
         lt.execute("10");
     }
 
-    public void onStop(Task tk){
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void onStop(Task tk , Context context){
         this.task = tk;
         this.stop = true;
+        if (tk.isConcluded()){
+            Toast t  = Toast.makeText(context, "A task " + task.getTitle().toString() + " foi concluida." , Toast.LENGTH_LONG);
+            t.show();
+            TaskDAO.listTasks.remove(tk);
+//            playAlarm(context);
+//            Notification ntf = new Notification();
+//            Intent i = new Intent(context , NotificationSender.class);
+//            startActivity(i);
+
+            MainActivity m = new MainActivity();
+            m.enviarNotification();
+
+
+
+        }
+
+
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void enviarNotification(Context context){
+        Notification.Builder mBuilder = new Notification.Builder(context).setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("novo teste")
+                .setContentText("testeando aadasijda")
+                .setAutoCancel(true);
+
+        Intent resultIntent = new Intent(context, NotificationSender.class);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addParentStack(NotificationSender.class);
+        stackBuilder.addNextIntent(resultIntent);
+
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(PENDING_INTENT_ID , PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID , mBuilder.build());
+    }
+
+
+    public void playAlarm(Context context){
+//        Intent it = new Intent( "TOCAR_ALARME");
+//        PendingIntent alaPendingIntent = PendingIntent.getBroadcast(context, 0 , it, 0);
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTimeInMillis(System.currentTimeMillis());
+//        cal.add(Calendar.SECOND , 3);
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(context.ALARM_SERVICE);
+//        alarmManager.set(AlarmManager.RTC , cal.getTimeInMillis() , alaPendingIntent);
+
 
     }
 
@@ -100,13 +172,14 @@ public class ChronometerService extends Service {
                     //Chronometer cr =
                     Log.i("APP", "Value : "+count );
                     task.setQtdSegundos(String.valueOf(count));
-                    count--;
+
                     if (count == 0){
                         task.setDescanso(false);
                     }
                     publishProgress(task);
+                    count--;
                 }
-            }else{
+            }else if (Integer.parseInt(task.getQtdPomodoros()) > task.getPomodorosFeitos()){
 
                 i = Integer.parseInt(num);
                 while(!stop && i >= 0 ){
@@ -126,6 +199,9 @@ public class ChronometerService extends Service {
                     }
                     publishProgress(task);
                 }
+            }else{
+                task.setConcluded(true);
+                publishProgress(task);
             }
             return null;
         }
