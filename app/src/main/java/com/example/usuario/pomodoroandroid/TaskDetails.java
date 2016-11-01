@@ -56,11 +56,13 @@ public class TaskDetails extends AppCompatActivity {
                 tsk = new TaskDAO(getApplicationContext());
 
                 if(index!= -1){
-                    tsk.listTasks.remove(index);
-                    tsk.listTasks.add( index,task);
+//                    tsk.listTasks.remove(index);
+//                    tsk.listTasks.add( index,task);
+                    tsk.inserirTask(task);
                 }else{
-                    tsk.listTasks.add(task);
+                    tsk.inserirTask(task);
                 }
+
 
                 System.out.println("Quatidade de tasks na lista: "+tsk.listTasks.size());
                 finish();

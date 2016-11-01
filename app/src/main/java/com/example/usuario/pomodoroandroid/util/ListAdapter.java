@@ -37,15 +37,18 @@ import java.util.ArrayList;
 public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements ChronometerService.DataListener{
 
     private Context context;
+    public TaskDAO tsk;
 
     public static boolean sBound;
     public static boolean sChronometerStarted;
     public static ChronometerService chronometerService = new ChronometerService() ;
+    public ArrayList<Task> listTasks;
 
-    public ListAdapter(Context applicationContext){
-
+    public ListAdapter(Context applicationContext , TaskDAO tsk){
         this.context = applicationContext;
+        this.tsk = tsk;
         chronometerService.setListener(this);
+        listTasks = tsk.carregaDados();
 
     }
 
@@ -93,7 +96,7 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
             MainActivity.chro.setText(formataTempo(Integer.parseInt(task.getQtdSegundos())));
         }
 
-
+        listTasks = tsk.carregaDados();
         notifyDataSetChanged();
     }
 
@@ -101,6 +104,7 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
 
         TextView txtTitle, txtDescription, txtPomodoros, txtPomodorosFeitos;
         Button btnPlayPause, btnConcluded, btnEdit;
+
 
 
         public ViewHolder(View itemView) {
@@ -117,11 +121,13 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
 
         }
     }
-    TaskDAO tsk = new TaskDAO(context);
-    ArrayList<Task> listTasks = tsk.listTasks;
+
+
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card, parent, false);
 
@@ -151,6 +157,7 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
         });
         holder.btnPlayPause.setOnClickListener(new View.OnClickListener() {
 
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onClick(View v) {
 
@@ -169,22 +176,16 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
 
             }
         });
-
-
-
     }
-
 
     @Override
     public int getItemCount() {
+
         if(listTasks == null){
             return 0;
         }
-
         return listTasks.size();
     }
-
-
 
 
 }

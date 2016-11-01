@@ -99,14 +99,13 @@ public class ChronometerService extends Service {
             t.show();
             TaskDAO.listTasks.remove(tk);
 //            playAlarm(context);
-//            Notification ntf = new Notification();
-//            Intent i = new Intent(context , NotificationSender.class);
-//            startActivity(i);
+//            NotificationSender ntf = new NotificationSender();
+//            Intent i = new Intent(context.getApplicationContext() , NotificationSender.class);
+//            context.getApplicationContext().startActivity(i);
 
-            MainActivity m = new MainActivity();
-            m.enviarNotification();
-
-
+//            MainActivity m = new MainActivity();
+//            m.enviarNotification();
+//            enviarNotification(context);
 
         }
 
@@ -116,21 +115,21 @@ public class ChronometerService extends Service {
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void enviarNotification(Context context){
-        Notification.Builder mBuilder = new Notification.Builder(context).setSmallIcon(R.mipmap.ic_launcher)
+        Notification.Builder mBuilder = new Notification.Builder(context.getApplicationContext()).setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("novo teste")
                 .setContentText("testeando aadasijda")
                 .setAutoCancel(true);
 
-        Intent resultIntent = new Intent(context, NotificationSender.class);
+        Intent resultIntent = new Intent(context.getApplicationContext(), NotificationSender.class);
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context.getApplicationContext());
         stackBuilder.addParentStack(NotificationSender.class);
         stackBuilder.addNextIntent(resultIntent);
 
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(PENDING_INTENT_ID , PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(context.getApplicationContext().NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID , mBuilder.build());
     }
 

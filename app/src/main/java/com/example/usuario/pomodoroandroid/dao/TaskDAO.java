@@ -27,28 +27,31 @@ public class TaskDAO {
 
     public TaskDAO(Context context) {
         this.context = context;
-        //this.listTasks = new ArrayList<>();
-        if(listTasks == null){
-            listTasks = new ArrayList<>();
-            Task t = new Task();
-            t.setTitle("NOVO");
-            t.setDescription("testando array");
-            t.setQtdPomodoros("4");
-            listTasks.add(t);
-            Task t2 = new Task();
-            t2.setTitle("NOVO2");
-            t2.setDescription("testando array");
-            t2.setQtdPomodoros("1");
-            listTasks.add(t2);
-
-        }
-
         if (criaBanco == null){
             criaBanco = new DbHelper(context);
-            carregaDados();
-        }else{
-            carregaDados();
+//            carregaDados();
         }
+//        this.listTasks = carregaDados();
+        if(listTasks == null){
+            listTasks = new ArrayList<>();
+//            Task t = new Task();
+//            t.setTitle("NOVO");
+//            t.setDescription("testando array");
+//            t.setQtdPomodoros("4");
+//            inserirTask(t);
+////            listTasks.add(t);
+//            Task t2 = new Task();
+//            t2.setTitle("NOVO2");
+//            t2.setDescription("testando array");
+//            t2.setQtdPomodoros("1");
+////            listTasks.add(t2);
+//            inserirTask(t2);
+//            this.listTasks = carregaDados();
+
+        }else{
+//            this.listTasks = carregaDados();
+        }
+
 
 
     }
@@ -73,16 +76,18 @@ public class TaskDAO {
         if (resultado ==-1)
             return "Erro ao inserir registro";
         else
+//            carregaDados();
             return "Registro Inserido com sucesso";
 
     }
 
-    public Cursor carregaDados(){
+    public ArrayList<Task> carregaDados(){
         Cursor cursor;
         String[] campos =  {criaBanco.title ,criaBanco.description ,criaBanco.qtdSegundos, criaBanco.qtdPomodoros,
                 criaBanco.pomodorosFeitos,criaBanco.concluded, criaBanco.descanso};
         db = criaBanco.getReadableDatabase();
-        cursor = db.query(criaBanco.tabela, campos, null, null, null, null, null, null);
+        cursor = db.query(criaBanco.tabela, campos, null, null, null, null,  null);
+        listTasks.clear();
 
         if(cursor!=null){
             cursor.moveToFirst();
@@ -101,7 +106,7 @@ public class TaskDAO {
         }
 
         db.close();
-        return cursor;
+        return listTasks;
     }
 
 

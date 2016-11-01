@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.Contacts;
 
 /**
  * Created by rafael.comar on 31/10/2016.
@@ -14,6 +15,7 @@ public class DbHelper extends SQLiteOpenHelper {
     String SQL_CREATE_ENTRIES;
 
     public static String tabela = "tasks";
+    public static final String KEY_ID = "_id";
     public static String title = "titulo";
     public static  String description = "descricao";
     public static  String qtdPomodoros = "total_pomodoros";
@@ -35,15 +37,15 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        SQL_CREATE_ENTRIES = "CREATE " + tabela +" tasks(" +
-                " ID integer primary key autoincrement,"
-                + title + "text,"
-                + description + "text,"
-                + qtdPomodoros + "text"
-                + qtdSegundos + "text"
-                + descanso + "integer"
-                + concluded + "integer"
-                + pomodorosFeitos + "integer"
+        SQL_CREATE_ENTRIES = "CREATE TABLE " + tabela +"(" +
+                KEY_ID  +" integer primary key autoincrement,"
+                + title + " text,"
+                + description + " text,"
+                + qtdPomodoros + " text,"
+                + qtdSegundos + " text,"
+                + descanso + " integer,"
+                + concluded + " integer,"
+                + pomodorosFeitos + " integer"
                 +")";
         db.execSQL(SQL_CREATE_ENTRIES);
     }

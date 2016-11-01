@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.usuario.pomodoroandroid.dao.TaskDAO;
 import com.example.usuario.pomodoroandroid.model.Task;
 import com.example.usuario.pomodoroandroid.services.ChronometerService;
 import com.example.usuario.pomodoroandroid.util.ListAdapter;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     public static TextView chro;
     private Task tsk = new Task();
+    private TaskDAO tskdao;
 
 
 
@@ -59,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new ListAdapter(getApplicationContext());
+        tskdao = new TaskDAO(getApplicationContext());
+        mAdapter = new ListAdapter(getApplicationContext() , tskdao);
         mRecyclerView.setAdapter(mAdapter);
 
         chro = (TextView) findViewById(R.id.chronometerTimer);
@@ -117,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        mAdapter = new ListAdapter(getApplicationContext() , tskdao);
         mRecyclerView.setAdapter(mAdapter);
 
 
