@@ -120,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         mAdapter = new ListAdapter(getApplicationContext() , tskdao);
         mRecyclerView.setAdapter(mAdapter);
 

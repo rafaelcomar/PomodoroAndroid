@@ -151,6 +151,7 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
             public void onClick(View v) {
                 Intent i = new Intent(context.getApplicationContext(), TaskDetails.class);
                 i.putExtra("task_index", position);
+
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
             }
@@ -174,6 +175,15 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
 
                 }
 
+            }
+        });
+
+        holder.btnConcluded.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tsk.delete(position);
+                listTasks.remove(position);
+                notifyDataSetChanged();
             }
         });
     }

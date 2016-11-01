@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class Task implements Serializable {
 
-
+    private int id;
     private String title;
     private String description;
     private String qtdPomodoros;
@@ -16,6 +16,14 @@ public class Task implements Serializable {
     private boolean descanso;
     private boolean concluded;
     private int pomodorosFeitos=0;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getPomodorosFeitos() {
         return pomodorosFeitos;

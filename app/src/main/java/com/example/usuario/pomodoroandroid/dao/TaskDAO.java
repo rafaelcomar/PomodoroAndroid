@@ -82,31 +82,93 @@ public class TaskDAO {
     }
 
     public ArrayList<Task> carregaDados(){
-        Cursor cursor;
-        String[] campos =  {criaBanco.title ,criaBanco.description ,criaBanco.qtdSegundos, criaBanco.qtdPomodoros,
-                criaBanco.pomodorosFeitos,criaBanco.concluded, criaBanco.descanso};
-        db = criaBanco.getReadableDatabase();
-        cursor = db.query(criaBanco.tabela, campos, null, null, null, null,  null);
-        listTasks.clear();
+            Cursor cursor;
+            String[] campos =  {criaBanco.KEY_ID ,criaBanco.title ,criaBanco.description ,criaBanco.qtdSegundos, criaBanco.qtdPomodoros,
+                    criaBanco.pomodorosFeitos,criaBanco.concluded, criaBanco.descanso};
 
-        if(cursor!=null){
-            cursor.moveToFirst();
-            while (cursor.moveToNext()){
-                Task t = new Task();
-                t.setTitle(cursor.getString(0));
-                t.setDescription(cursor.getString(1));
-                t.setQtdSegundos(cursor.getString(2));
-                t.setQtdPomodoros(cursor.getString(3));
-                t.setPomodorosFeitos(Integer.parseInt(cursor.getString(4)));
-                t.setConcluded(Boolean.parseBoolean(cursor.getString(5)));
-                t.setDescanso(Boolean.parseBoolean(cursor.getString(6)));
 
-                listTasks.add(t);
+            db = criaBanco.getReadableDatabase();
+            cursor = db.query(criaBanco.tabela, campos, null, null, null, null,  null);
+            listTasks.clear();
+
+            if(cursor!=null){
+                cursor.moveToFirst();
+                while (cursor.moveToNext()){
+                    Task t = new Task();
+                    t.setId(Integer.parseInt(cursor.getString(0)));
+                    t.setTitle(cursor.getString(1));
+                    t.setDescription(cursor.getString(2));
+                    t.setQtdSegundos(cursor.getString(3));
+                    t.setQtdPomodoros(cursor.getString(4));
+                    t.setPomodorosFeitos(Integer.parseInt(cursor.getString(5)));
+                    t.setConcluded(Boolean.parseBoolean(cursor.getString(6)));
+                    t.setDescanso(Boolean.parseBoolean(cursor.getString(7)));
+
+                    listTasks.add(t);
+                }
             }
-        }
 
         db.close();
         return listTasks;
+    }
+
+
+
+    public Task searchTaskById(int index){
+        db = criaBanco.getReadableDatabase();
+        Task t= null;
+        Cursor cursor;
+        String[] campos =  {criaBanco.title ,criaBanco.description ,criaBanco.qtdSegundos, criaBanco.qtdPomodoros,
+                criaBanco.pomodorosFeitos,criaBanco.concluded, criaBanco.descanso};
+        String where = criaBanco.KEY_ID + "=" + index;
+        db = criaBanco.getReadableDatabase();
+        cursor = db.query(criaBanco.tabela,campos,where, null, null, null, null, null);
+
+        if(cursor!=null){
+            cursor.moveToFirst();
+
+            t.setTitle(cursor.getString(0));
+            t.setDescription(cursor.getString(1));
+            t.setQtdSegundos(cursor.getString(2));
+            t.setQtdPomodoros(cursor.getString(3));
+            t.setPomodorosFeitos(Integer.parseInt(cursor.getString(4)));
+            t.setConcluded(Boolean.parseBoolean(cursor.getString(5)));
+            t.setDescanso(Boolean.parseBoolean(cursor.getString(6)));
+        }
+        db.close();
+        return t;
+
+    }
+
+    public void updateTask(Task task){
+        ContentValues valores;
+        String where;
+
+        db = criaBanco.getWritableDatabase();
+
+        where = criaBanco.KEY_ID + "=" + task.getId();
+
+        valores = new ContentValues();
+        valores.put(criaBanco.title , task.getTitle());
+        valores.put(criaBanco.description, task.getDescription());
+        valores.put(criaBanco.qtdSegundos, task.getQtdSegundos());
+        valores.put(criaBanco.qtdPomodoros, task.getQtdPomodoros());
+        valores.put(criaBanco.pomodorosFeitos, task.getPomodorosFeitos());
+        valores.put(criaBanco.concluded, task.isConcluded());
+        valores.put(criaBanco.descanso, task.isDescanso());
+
+        db.update(criaBanco.tabela,valores,where,null);
+        db.close();
+
+    }
+
+    public void delete(int position){
+
+        Task task = getTsk(position);
+        String where = criaBanco.KEY_ID + "=" + task.getId();
+        db = criaBanco.getReadableDatabase();
+        db.delete(criaBanco.tabela,where,null);
+        db.close();
     }
 
 

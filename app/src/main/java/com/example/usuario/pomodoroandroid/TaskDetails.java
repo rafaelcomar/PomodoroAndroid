@@ -16,6 +16,8 @@ public class TaskDetails extends AppCompatActivity {
     Button btnSave;
     TaskDAO tsk ;
     private int index = -1;
+    private int task_id;
+    private Task taskRecebido;
 
 
     @Override
@@ -33,7 +35,7 @@ public class TaskDetails extends AppCompatActivity {
             index = getIntent().getIntExtra("task_index", -1);
             if (index != -1){
                 tsk = new TaskDAO(getApplicationContext());
-                Task taskRecebido = tsk.getTsk(index);
+                taskRecebido = tsk.getTsk(index);
 
                 txtTile.setText(taskRecebido.getTitle());
                 txtDescription.setText(taskRecebido.getDescription());
@@ -47,20 +49,24 @@ public class TaskDetails extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Task task = new Task();
+                if(taskRecebido == null){
+                    taskRecebido = new Task();
+                }
 
-                task.setTitle(txtTile.getText().toString());
-                task.setDescription(txtDescription.getText().toString());
-                task.setQtdPomodoros(txtPomodoros.getText().toString());
+
+                taskRecebido.setTitle(txtTile.getText().toString());
+                taskRecebido.setDescription(txtDescription.getText().toString());
+                taskRecebido.setQtdPomodoros(txtPomodoros.getText().toString());
 
                 tsk = new TaskDAO(getApplicationContext());
 
                 if(index!= -1){
 //                    tsk.listTasks.remove(index);
 //                    tsk.listTasks.add( index,task);
-                    tsk.inserirTask(task);
+
+                     tsk.updateTask(taskRecebido);
                 }else{
-                    tsk.inserirTask(task);
+                    tsk.inserirTask(taskRecebido);
                 }
 
 
