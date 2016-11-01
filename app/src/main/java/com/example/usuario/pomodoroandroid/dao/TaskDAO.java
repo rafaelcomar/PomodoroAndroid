@@ -86,9 +86,9 @@ public class TaskDAO {
             String[] campos =  {criaBanco.KEY_ID ,criaBanco.title ,criaBanco.description ,criaBanco.qtdSegundos, criaBanco.qtdPomodoros,
                     criaBanco.pomodorosFeitos,criaBanco.concluded, criaBanco.descanso};
 
-
+            String where = criaBanco.concluded + "!=" + 1;
             db = criaBanco.getReadableDatabase();
-            cursor = db.query(criaBanco.tabela, campos, null, null, null, null,  null);
+            cursor = db.query(criaBanco.tabela, campos, where, null, null, null,  null);
             listTasks.clear();
 
             if(cursor!=null){

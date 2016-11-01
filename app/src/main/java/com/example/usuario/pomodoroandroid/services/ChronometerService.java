@@ -87,7 +87,7 @@ public class ChronometerService extends Service {
         //this.task.setDescanso(true);
 
         LoadTask lt = new LoadTask();
-        lt.execute("10");
+        lt.execute("25");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -160,7 +160,13 @@ public class ChronometerService extends Service {
             String num = params[0];
 
             if (task.isDescanso()){
-                int count = 6;
+                int count;
+                if (task.getPomodorosFeitos()%4 ==0 ){
+                    count = 10;
+                }else{
+                    count = 5;
+                }
+
 
                 while (task.isDescanso() && count >= 0){
                     try {

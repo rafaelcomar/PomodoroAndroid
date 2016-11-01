@@ -82,21 +82,24 @@ public class ListAdapter  extends RecyclerView.Adapter<ListAdapter.ViewHolder> i
             chronometerService.onStop(task , context);
             sChronometerStarted = false;
             chronometerService.onStart(task, context);
+            tsk.updateTask(task);
         }else if (task.isDescanso() == false && Integer.parseInt(task.getQtdSegundos()) == 0 && task.isConcluded() == false){
             MainActivity.chro.setTextColor(Color.BLACK);
             MainActivity.chro.setText(formataTempo(Integer.parseInt(task.getQtdSegundos())));
             chronometerService.onStop(task,context);
             sChronometerStarted = true;
             chronometerService.onStart(task, context);
+            tsk.updateTask(task);
         }else if (task.isConcluded()){
             chronometerService.onStop(task,context);
+            tsk.updateTask(task);
 
 
         }else{
             MainActivity.chro.setText(formataTempo(Integer.parseInt(task.getQtdSegundos())));
         }
 
-        listTasks = tsk.carregaDados();
+//        listTasks = tsk.carregaDados();
         notifyDataSetChanged();
     }
 
