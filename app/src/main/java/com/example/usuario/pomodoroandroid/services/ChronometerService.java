@@ -87,7 +87,7 @@ public class ChronometerService extends Service {
         //this.task.setDescanso(true);
 
         LoadTask lt = new LoadTask();
-        lt.execute("25");
+        lt.execute("1500");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -162,9 +162,9 @@ public class ChronometerService extends Service {
             if (task.isDescanso()){
                 int count;
                 if (task.getPomodorosFeitos()%4 ==0 ){
-                    count = 10;
+                    count = 1800;
                 }else{
-                    count = 5;
+                    count = 300;
                 }
 
 
